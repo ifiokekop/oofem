@@ -262,6 +262,7 @@ set (sm_material
     Materials/lsmastermatgrad.C
     Materials/simplevitrificationmaterial.C
     Materials/anisodamagemodel.C
+    Materials/frpdamagemodel.C
     Materials/winklerpasternak.C
     Materials/winklermodel.C
     Materials/structmatsettable.C
