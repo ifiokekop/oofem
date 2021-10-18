@@ -42,24 +42,24 @@
 
 #include "material.h"
 #include "sm/Materials/linearelasticmaterial.h"
-#include "sm/Materials/structuralmaterial.h"
+#include "sm/Materials/isodamagemodel.h"
 #include "sm/Materials/structuralms.h"
 
 ///@name Input fields for frpDamageMaterial
 //@{
-#define _IFT_frpDamageMaterial_talpha "talpha"
-#define _IFT_frpDamageMaterial_maxOmega "maxomega"
-#define _IFT_frpDamageMaterial_permstrain "ps"
+#define _IFT_FRPDamageMaterial_talpha "talpha"
+#define _IFT_FRPDamageMaterial_maxOmega "maxomega"
+#define _IFT_FRPDamageMaterial_permstrain "ps"
 //@}
 
 namespace oofem {
 class GaussPoint;
 
 /**
- * This class implements associated Material Status to frpDamageMaterial.
+ * This class implements associated Material Status to FRPDamageMaterial.
  * Stores a scalar damage and hardening variable (and possible extra information).
  */
-class IsotropicDamageMaterialStatus : public StructuralMaterialStatus
+class FRPDamageMaterialStatus : public IsotropicDamageMaterialStatus
 {
 protected:
     /// Scalar measure of the largest strain level ever reached in material.
@@ -94,7 +94,7 @@ protected:
 
 public:
     /// Constructor
-    frpDamageMaterialStatus(GaussPoint *g);
+    FRPDamageMaterialStatus(GaussPoint *g);
 
     void printOutputAt(FILE *file, TimeStep *tStep) const override;
 
@@ -141,7 +141,7 @@ public:
     void computeWork(GaussPoint *gp);
 #endif
 
-    const char *giveClassName() const override { return "frpDamageMaterialModelStatus"; }
+    const char *giveClassName() const override { return "FRPDamageMaterialModelStatus"; }
 
     void initTempStatus() override;
     void updateYourself(TimeStep *tStep) override;
@@ -157,7 +157,7 @@ public:
  * is postulated in explicit form, relation damage parameter (omega) to scalar measure
  * of the largest strain level ever reached in material (kappa).
  */
-class frpDamageMaterial : public StructuralMaterial
+class FRPDamageMaterial : public StructuralMaterial
 {
 protected:
     /// Coefficient of thermal dilatation.
@@ -181,12 +181,12 @@ protected:
 
 public:
     /// Constructor
-    frpDamageMaterial(int n, Domain *d);
+    FRPDamageMaterial(int n, Domain *d);
     /// Destructor
-    virtual ~frpDamageMaterial();
+    virtual ~FRPDamageMaterial();
 
     bool hasMaterialModeCapability(MaterialMode mode) const override;
-    const char *giveClassName() const override { return "frpDamageMaterial"; }
+    const char *giveClassName() const override { return "FRPDamageMaterial"; }
 
     /// Returns reference to undamaged (bulk) material
     LinearElasticMaterial *giveLinearElasticMaterial() { return linearElasticMaterial; }
@@ -199,31 +199,31 @@ public:
     FloatArrayF<6> giveRealStressVector_3d(const FloatArrayF<6> &strain, GaussPoint *gp, TimeStep *tStep) const override
     {
         FloatArray answer;
-        const_cast<frpDamageMaterial*>(this)->giveRealStressVector(answer, gp, strain, tStep);
+        const_cast<FRPDamageMaterial*>(this)->giveRealStressVector(answer, gp, strain, tStep);
         return answer;
     }
     FloatArrayF<4> giveRealStressVector_PlaneStrain( const FloatArrayF<4> &strain, GaussPoint *gp, TimeStep *tStep) const override
     {
         FloatArray answer;
-        const_cast<frpDamageMaterial*>(this)->giveRealStressVector(answer, gp, strain, tStep);
+        const_cast<FRPDamageMaterial*>(this)->giveRealStressVector(answer, gp, strain, tStep);
         return answer;
     }
     FloatArray giveRealStressVector_StressControl(const FloatArray &strain, const IntArray &strainControl, GaussPoint *gp, TimeStep *tStep) const override
     {
         FloatArray answer;
-        const_cast<frpDamageMaterial*>(this)->giveRealStressVector(answer, gp, strain, tStep);
+        const_cast<FRPDamageMaterial*>(this)->giveRealStressVector(answer, gp, strain, tStep);
         return answer;
     }
     FloatArrayF<3> giveRealStressVector_PlaneStress(const FloatArrayF<3> &strain, GaussPoint *gp, TimeStep *tStep) const override
     {
         FloatArray answer;
-        const_cast<frpDamageMaterial*>(this)->giveRealStressVector(answer, gp, strain, tStep);
+        const_cast<FRPDamageMaterial*>(this)->giveRealStressVector(answer, gp, strain, tStep);
         return answer;
     }
     FloatArrayF<1> giveRealStressVector_1d(const FloatArrayF<1> &strain, GaussPoint *gp, TimeStep *tStep) const override
     {
         FloatArray answer;
-        const_cast<frpDamageMaterial*>(this)->giveRealStressVector(answer, gp, strain, tStep);
+        const_cast<FRPDamageMaterial*>(this)->giveRealStressVector(answer, gp, strain, tStep);
         return answer;
     }
 
@@ -268,7 +268,7 @@ public:
     void initializeFrom(InputRecord &ir) override;
     void giveInputRecord(DynamicInputRecord &input) override;
 
-    MaterialStatus *CreateStatus(GaussPoint *gp) const override { return new frpDamageMaterialStatus(gp); }
+    MaterialStatus *CreateStatus(GaussPoint *gp) const override { return new FRPDamageMaterialStatus(gp); }
 
     FloatMatrixF<1,1> give1dStressStiffMtrx(MatResponseMode mmode, GaussPoint *gp,
                                             TimeStep *tStep) const override;

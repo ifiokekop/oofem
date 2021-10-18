@@ -41,32 +41,32 @@
 #include "dynamicinputrecord.h"
 
 namespace oofem {
-frpDamageMaterial :: frpDamageMaterial(int n, Domain *d) : StructuralMaterial(n, d)
+FRPDamageMaterial :: FRPDamageMaterial(int n, Domain *d) : StructuralMaterial(n, d)
 {
 }
 
 
-frpDamageMaterial :: ~frpDamageMaterial()
+FRPDamageMaterial :: ~FRPDamageMaterial()
 {
     delete linearElasticMaterial;
 }
 
 bool
-frpDamageMaterial :: hasMaterialModeCapability(MaterialMode mode) const
+FRPDamageMaterial :: hasMaterialModeCapability(MaterialMode mode) const
 {
     return mode == _3dMat || mode == _PlaneStress || mode == _PlaneStrain || mode == _1dMat;
 }
 
 
 FloatMatrixF<6,6>
-frpDamageMaterial :: give3dMaterialStiffnessMatrix(MatResponseMode mode,
+FRPDamageMaterial :: give3dMaterialStiffnessMatrix(MatResponseMode mode,
                                                          GaussPoint *gp,
                                                          TimeStep *tStep) const
 //
 // computes full constitutive matrix for case of gp stress-strain state.
 //
 {
-    auto status = static_cast< frpDamageMaterialStatus * >( this->giveStatus(gp) );
+    auto status = static_cast< FRPDamageMaterialStatus * >( this->giveStatus(gp) );
     double tempDamage;
     if ( mode == ElasticStiffness ) {
         tempDamage = 0.0;
@@ -82,7 +82,7 @@ frpDamageMaterial :: give3dMaterialStiffnessMatrix(MatResponseMode mode,
 
 
 void
-frpDamageMaterial :: giveRealStressVector(FloatArray &answer, GaussPoint *gp,
+FRPDamageMaterial :: giveRealStressVector(FloatArray &answer, GaussPoint *gp,
                                                 const FloatArray &totalStrain,
                                                 TimeStep *tStep)
 //
@@ -91,7 +91,7 @@ frpDamageMaterial :: giveRealStressVector(FloatArray &answer, GaussPoint *gp,
 // strain increment, the only way, how to correctly update gp records
 //
 {
-    frpDamageMaterialStatus *status = static_cast< frpDamageMaterialStatus * >( this->giveStatus(gp) );
+    FRPDamageMaterialStatus *status = static_cast< FRPDamageMaterialStatus * >( this->giveStatus(gp) );
     //StructuralCrossSection *crossSection = (StructuralCrossSection*) gp -> giveElement()->giveCrossSection();
     LinearElasticMaterial *lmat = this->giveLinearElasticMaterial();
     FloatArray reducedTotalStrainVector;
@@ -166,9 +166,9 @@ frpDamageMaterial :: giveRealStressVector(FloatArray &answer, GaussPoint *gp,
 
 
 FloatMatrixF<3,3>
-frpDamageMaterial :: givePlaneStressStiffMtrx(MatResponseMode mode, GaussPoint *gp, TimeStep *tStep) const
+FRPDamageMaterial :: givePlaneStressStiffMtrx(MatResponseMode mode, GaussPoint *gp, TimeStep *tStep) const
 {
-    auto status = static_cast< frpDamageMaterialStatus * >( this->giveStatus(gp) );
+    auto status = static_cast< FRPDamageMaterialStatus * >( this->giveStatus(gp) );
     double tempDamage;
     if ( mode == ElasticStiffness ) {
         tempDamage = 0.0;
@@ -207,9 +207,9 @@ frpDamageMaterial :: givePlaneStressStiffMtrx(MatResponseMode mode, GaussPoint *
 
 
 FloatMatrixF<4,4>
-frpDamageMaterial :: givePlaneStrainStiffMtrx(MatResponseMode mode, GaussPoint *gp, TimeStep *tStep) const
+FRPDamageMaterial :: givePlaneStrainStiffMtrx(MatResponseMode mode, GaussPoint *gp, TimeStep *tStep) const
 {
-    auto status = static_cast< frpDamageMaterialStatus * >( this->giveStatus(gp) );
+    auto status = static_cast< FRPDamageMaterialStatus * >( this->giveStatus(gp) );
     double tempDamage;
     if ( mode == ElasticStiffness ) {
         tempDamage = 0.0;
@@ -224,9 +224,9 @@ frpDamageMaterial :: givePlaneStrainStiffMtrx(MatResponseMode mode, GaussPoint *
 
 
 FloatMatrixF<1,1>
-frpDamageMaterial :: give1dStressStiffMtrx(MatResponseMode mode, GaussPoint *gp, TimeStep *tStep) const
+FRPDamageMaterial :: give1dStressStiffMtrx(MatResponseMode mode, GaussPoint *gp, TimeStep *tStep) const
 {
-    auto status = static_cast< frpDamageMaterialStatus * >( this->giveStatus(gp) );
+    auto status = static_cast< FRPDamageMaterialStatus * >( this->giveStatus(gp) );
     double tempDamage;
     if ( mode == ElasticStiffness ) {
         tempDamage = 0.0;
@@ -270,9 +270,9 @@ frpDamageMaterial :: give1dStressStiffMtrx(MatResponseMode mode, GaussPoint *gp,
 
 
 int
-frpDamageMaterial :: giveIPValue(FloatArray &answer, GaussPoint *gp, InternalStateType type, TimeStep *tStep)
+FRPDamageMaterial :: giveIPValue(FloatArray &answer, GaussPoint *gp, InternalStateType type, TimeStep *tStep)
 {
-    frpDamageMaterialStatus *status = static_cast< frpDamageMaterialStatus * >( this->giveStatus(gp) );
+    FRPDamageMaterialStatus *status = static_cast< FRPDamageMaterialStatus * >( this->giveStatus(gp) );
     if ( type == IST_DamageScalar ) {
         answer.resize(1);
         answer.zero();
@@ -347,7 +347,7 @@ frpDamageMaterial :: giveIPValue(FloatArray &answer, GaussPoint *gp, InternalSta
 
 
 FloatArrayF<6>
-frpDamageMaterial :: giveThermalDilatationVector(GaussPoint *gp, TimeStep *tStep) const
+FRPDamageMaterial :: giveThermalDilatationVector(GaussPoint *gp, TimeStep *tStep) const
 //
 // returns a FloatArray(6) of initial strain vector
 // eps_0 = {exx_0, eyy_0, ezz_0, gyz_0, gxz_0, gxy_0}^T
@@ -363,45 +363,45 @@ frpDamageMaterial :: giveThermalDilatationVector(GaussPoint *gp, TimeStep *tStep
     };
 }
 
-double frpDamageMaterial :: give(int aProperty, GaussPoint *gp) const
+double FRPDamageMaterial :: give(int aProperty, GaussPoint *gp) const
 {
     return linearElasticMaterial->give(aProperty, gp);
 }
 
 void
-frpDamageMaterial :: initializeFrom(InputRecord &ir)
+FRPDamageMaterial :: initializeFrom(InputRecord &ir)
 {
     StructuralMaterial :: initializeFrom(ir);
 
     //Set limit on the maximum frp damage parameter if needed
-    IR_GIVE_OPTIONAL_FIELD(ir, maxOmega, _IFT_frpDamageMaterial_maxOmega);
+    IR_GIVE_OPTIONAL_FIELD(ir, maxOmega, _IFT_FRPDamageMaterial_maxOmega);
     maxOmega = min(maxOmega, 0.999999);
     maxOmega = max(maxOmega, 0.0);
 
     permStrain = 0; // default - no permanent strain used
-    IR_GIVE_OPTIONAL_FIELD(ir, permStrain, _IFT_frpDamageMaterial_permstrain);
+    IR_GIVE_OPTIONAL_FIELD(ir, permStrain, _IFT_FRPDamageMaterial_permstrain);
 
-    IR_GIVE_FIELD(ir, tempDillatCoeff, _IFT_frpDamageMaterial_talpha);
+    IR_GIVE_FIELD(ir, tempDillatCoeff, _IFT_FRPDamageMaterial_talpha);
 }
 
 
 void
-frpDamageMaterial :: giveInputRecord(DynamicInputRecord &input)
+FRPDamageMaterial :: giveInputRecord(DynamicInputRecord &input)
 {
     StructuralMaterial :: giveInputRecord(input);
-    input.setField(this->maxOmega, _IFT_frpDamageMaterial_maxOmega);
-    input.setField(this->tempDillatCoeff, _IFT_frpDamageMaterial_talpha);
+    input.setField(this->maxOmega, _IFT_FRPDamageMaterial_maxOmega);
+    input.setField(this->tempDillatCoeff, _IFT_FRPDamageMaterial_talpha);
 }
 
 
 
-frpDamageMaterialStatus :: frpDamageMaterialStatus(GaussPoint *g) : StructuralMaterialStatus(g)
+FRPDamageMaterialStatus :: FRPDamageMaterialStatus(GaussPoint *g) : IsotropicDamageMaterialStatus(g)
 {
 }
 
 
 void
-frpDamageMaterialStatus :: printOutputAt(FILE *file, TimeStep *tStep) const
+FRPDamageMaterialStatus :: printOutputAt(FILE *file, TimeStep *tStep) const
 {
     StructuralMaterialStatus :: printOutputAt(file, tStep);
     fprintf(file, "status { ");
@@ -422,7 +422,7 @@ frpDamageMaterialStatus :: printOutputAt(FILE *file, TimeStep *tStep) const
 
 
 void
-frpDamageMaterialStatus :: initTempStatus()
+FRPDamageMaterialStatus :: initTempStatus()
 {
     StructuralMaterialStatus :: initTempStatus();
     this->tempKappa = this->kappa;
@@ -436,7 +436,7 @@ frpDamageMaterialStatus :: initTempStatus()
 
 
 void
-frpDamageMaterialStatus :: updateYourself(TimeStep *tStep)
+FRPDamageMaterialStatus :: updateYourself(TimeStep *tStep)
 {
     StructuralMaterialStatus :: updateYourself(tStep);
     this->kappa = this->tempKappa;
@@ -449,7 +449,7 @@ frpDamageMaterialStatus :: updateYourself(TimeStep *tStep)
 
 
 void
-frpDamageMaterialStatus :: saveContext(DataStream &stream, ContextMode mode)
+FRPDamageMaterialStatus :: saveContext(DataStream &stream, ContextMode mode)
 {
     StructuralMaterialStatus :: saveContext(stream, mode);
 
@@ -474,7 +474,7 @@ frpDamageMaterialStatus :: saveContext(DataStream &stream, ContextMode mode)
 }
 
 void
-frpDamageMaterialStatus :: restoreContext(DataStream &stream, ContextMode mode)
+FRPDamageMaterialStatus :: restoreContext(DataStream &stream, ContextMode mode)
 {
     StructuralMaterialStatus :: restoreContext(stream, mode);
 
@@ -500,7 +500,7 @@ frpDamageMaterialStatus :: restoreContext(DataStream &stream, ContextMode mode)
 
 #ifdef keep_track_of_dissipated_energy
 void
-frpDamageMaterialStatus :: computeWork(GaussPoint *gp)
+FRPDamageMaterialStatus :: computeWork(GaussPoint *gp)
 {
     // strain increment
     FloatArray deps;
